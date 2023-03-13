@@ -18,7 +18,7 @@ npm install crypto-js
 
 ## Node
 
-```
+```python
 /* Orden de compra-venta en API de Binance */
 
 // Declaración de las variables a utilizar
