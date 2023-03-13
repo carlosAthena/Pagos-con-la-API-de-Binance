@@ -16,7 +16,7 @@ Para Node se utiliza
 npm install crypto-js
 ```
 
-## Orden con Node
+## Creación de Orden de compra-venta con Node
 
 ```python
 /* Orden de compra-venta en API de Binance */
@@ -167,7 +167,7 @@ fetch("https://bpay.binanceapi.com/binancepay/openapi/v2/order/query", {
 ```
 
 
-## Orden con PHP
+## Creación de Orden de compra-venta con PHP
 
 ```python
 <?php
