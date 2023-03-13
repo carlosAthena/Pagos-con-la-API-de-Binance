@@ -16,7 +16,7 @@ Para Node se utiliza
 npm install crypto-js
 ```
 
-## Node
+## Orden con Node
 
 ```python
 /* Orden de compra-venta en API de Binance */
@@ -95,7 +95,79 @@ fetch("https://bpay.binanceapi.com/binancepay/openapi/v2/order", {
   .catch((error) => console.error(error));
 ```
 
-## PHP
+## Consulta con Node
+
+```python
+/* Consulta en API de Binance */
+
+// Declaración de las variables a utilizar
+
+let AES = require("crypto-js/aes");
+let SHA256 = require("crypto-js/sha256");
+
+// Solicitud de librería CryptoJS
+
+let CryptoJS = require("crypto-js");
+
+let chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+let nonce = "";
+for (let i = 1; i <= 32; i++) {
+  let pos = Math.floor(Math.random() * chars.length);
+  let char = chars.charAt(pos);
+  nonce += char;
+}
+let timestamp = Math.round(new Date().getTime());
+
+// Envío de parámetros para crear la consulta
+
+let request = {
+  env: {
+    terminalType: "APP",
+  },
+
+  merchantTradeNo: null,
+  prepayId: "216106764469239808",
+};
+
+let json_request = JSON.stringify(request);
+
+// Fórmula para crear el payload
+
+let payload = timestamp + "\n" + nonce + "\n" + json_request + "\n";
+
+// API Key y Secret de Binance
+
+let binance_pay_key = "";
+let binance_pay_secret = "";
+
+// Fórmula para crear el signature
+
+let signature = CryptoJS.HmacSHA512(payload, binance_pay_secret)
+  .toString(CryptoJS.enc.Hex)
+  .toUpperCase();
+let headers = new Headers();
+headers.append("Content-Type", "application/json");
+headers.append("BinancePay-Timestamp", timestamp.toString());
+headers.append("BinancePay-Nonce", nonce);
+headers.append("BinancePay-Certificate-SN", binance_pay_key);
+headers.append("BinancePay-Signature", signature);
+
+// Endpoint para crear la orden de consulta
+
+fetch("https://bpay.binanceapi.com/binancepay/openapi/v2/order/query", {
+  method: "POST",
+  headers: headers,
+  body: json_request,
+})
+  .then((response) => response.json())
+  .then((data) => {
+    console.log(data);
+  })
+  .catch((error) => console.error(error));
+```
+
+
+## Orden con PHP
 
 ```python
 <?php
@@ -166,6 +238,71 @@ fetch("https://bpay.binanceapi.com/binancepay/openapi/v2/order", {
     curl_close ($ch);
     var_dump($result);
 
+?>
+```
+
+## Consulta con PHP
+
+```python
+<?php
+
+ /* Consulta en API de Binance */
+
+// Declaración de las variables a utilizar
+
+    $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $nonce = '';
+    for($i=1; $i <= 32; $i++)
+    {
+        $pos = mt_rand(0, strlen($chars) - 1);
+        $char = $chars[$pos];
+        $nonce .= $char;
+    }
+    $ch = curl_init();
+    $timestamp = round(microtime(true) * 1000);
+
+// Envío de parámetros para crear la consulta
+
+     $request = array(
+      "env" => array(
+            "terminalType" => "APP" 
+         ),  
+       "prepayId" => 216102132347011072
+   ); 
+
+    $json_request = json_encode($request);
+
+// Fórmula para crear el payload
+
+    $payload = $timestamp."\n".$nonce."\n".$json_request."\n";
+
+// API Key y Secret de Binance
+
+    $binance_pay_key = "";
+    $binance_pay_secret = "";
+    
+// Fórmula para crear el signature
+
+    $signature = strtoupper(hash_hmac('SHA512',$payload,$binance_pay_secret));
+    $headers = array();
+    $headers[] = "Content-Type: application/json";
+    $headers[] = "BinancePay-Timestamp: $timestamp";
+    $headers[] = "BinancePay-Nonce: $nonce";
+    $headers[] = "BinancePay-Certificate-SN: $binance_pay_key";
+    $headers[] = "BinancePay-Signature: $signature";
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+// Endpoint para crear la consulta
+
+    curl_setopt($ch, CURLOPT_URL, "https://bpay.binanceapi.com/binancepay/openapi/v2/order/query");
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $json_request);
+    $result = curl_exec($ch);
+    if (curl_errno($ch)) { echo 'Error:' . curl_error($ch); }
+    curl_close ($ch);
+    var_dump($result);
+    
 ?>
 ```
 
