@@ -97,7 +97,7 @@ fetch("https://bpay.binanceapi.com/binancepay/openapi/v2/order", {
 
 ## PHP
 
-```
+```python
 <?php
 
  /* Orden de compra en API de Binance */
@@ -167,7 +167,6 @@ fetch("https://bpay.binanceapi.com/binancepay/openapi/v2/order", {
     var_dump($result);
 
 ?>
-
 ```
 
 
